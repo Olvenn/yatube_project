@@ -1,16 +1,21 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-
-
+from django.shortcuts import render, get_object_or_404
+from .models import Post, Group
+# from django.http import HttpResponse
 # Create your views here.
 # Главная страница
+
+
 def index(request):
     template = 'posts/index.html'
-    title = 'Это главная страница проекта Yatube'
-    # Словарь с данными принято называть context
+    # Одна строка вместо тысячи слов на SQL:
+    # в переменную posts будет сохранена выборка из 10 объектов модели Post,
+    # отсортированных по полю pub_date по убыванию 
+    # (от больших значений к меньшим)
+    posts = Post.objects.order_by('-pub_date')[:10]
+    # В словаре context отправляем информацию в шаблон
+    # # Словарь с данными принято называть context
     context = {
-        # В словарь можно передать переменную
-        'title': title,
+        'posts': posts,
     }
     return render(request, template, context)
 
@@ -18,11 +23,12 @@ def index(request):
 # Страница со списком мороженого
 def group_posts(request, slug):
     template = 'posts/group_list.html'
-    title = 'Здесь будет информация о группах проекта Yatube'
+    group = get_object_or_404(Group, slug=slug)
     # Словарь с данными принято называть context
+    posts = Post.objects.filter(group=group).order_by('-pub_date')[:10]
     context = {
-        # В словарь можно передать переменную
-        'title': title,
+        'group': group,
+        'posts': posts,
     }
     return render(request, template, context)
     # return HttpResponse(('Cтраница, на которой будут посты,'
