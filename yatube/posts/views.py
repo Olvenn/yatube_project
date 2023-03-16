@@ -1,8 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+
 from .models import Post, Group
-# from django.http import HttpResponse
-# Create your views here.
-# Главная страница
 
 
 def index(request):
